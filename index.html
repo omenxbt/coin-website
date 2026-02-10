@@ -52,6 +52,12 @@
       font-size: 22px;
       color: var(--dark);
       letter-spacing: -0.02em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .nav-logo:hover {
+      opacity: 0.8;
     }
     .nav-logo span { color: var(--orange); }
     .nav-contract {
@@ -505,7 +511,7 @@
 
   <!-- NAV -->
   <nav>
-    <div class="nav-logo"><span>$</span>Coin</div>
+    <a href="#hero" class="nav-logo"><span>$</span>Coin</a>
     <div class="nav-contract">
       <div class="contract-address" id="contract-address" title="Click to copy">
         <span id="contract-text">zDhCPQhQC8GPV2N6n8TMBcWBQehYkMHBuBZMzy3pump</span>
@@ -522,7 +528,7 @@
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero" id="hero">
     <div class="coin-wrapper">
       <div class="coin-ring"></div>
       <div class="coin-ring"></div>
