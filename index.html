@@ -839,13 +839,15 @@
         const m = Math.floor(s / 60);
         document.getElementById('stat-last').textContent = m + 'm ' + (s % 60) + 's';
         document.getElementById('stat-last-sub').textContent = 'ago';
-        document.getElementById('stat-last-sub').style.color = '#64C882';
+        // Green if less than 30 minutes, orange if 30+ minutes (overdue)
+        document.getElementById('stat-last-sub').style.color = s >= 1800 ? 'var(--orange)' : '#64C882';
       } else if (s < 86400) {
         const h = Math.floor(s / 3600);
         const m = Math.floor((s % 3600) / 60);
         document.getElementById('stat-last').textContent = h + 'h ' + m + 'm';
         document.getElementById('stat-last-sub').textContent = 'ago';
-        document.getElementById('stat-last-sub').style.color = s > 7200 ? 'var(--orange)' : '#64C882';
+        // Change to orange if more than 30 minutes (1800 seconds) since last compound
+        document.getElementById('stat-last-sub').style.color = s > 1800 ? 'var(--orange)' : '#64C882';
       } else {
         const d = Math.floor(s / 86400);
         document.getElementById('stat-last').textContent = d + 'd';
