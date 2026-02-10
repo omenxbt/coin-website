@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$Coin</title>
+  <meta name="description" content="$Coin is the fundamental unit. The origin. The standard. Without $Coin, there would be nothing.">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --white: #FAFAFA;
+      --off-white: #F5F3F0;
+      --orange: #E8832A;
+      --orange-light: #F5A04A;
+      --orange-glow: rgba(232, 131, 42, 0.15);
+      --orange-subtle: rgba(232, 131, 42, 0.06);
+      --dark: #1A1815;
+      --gray: #8A8580;
+      --gray-light: #C5C0BA;
+      --border: rgba(26, 24, 21, 0.08);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--white);
+      color: var(--dark);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(250, 250, 250, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 22px;
+      color: var(--dark);
+      letter-spacing: -0.02em;
+    }
+    .nav-logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--orange); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 40px 80px;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -55%);
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--orange-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .coin-wrapper {
+      position: relative;
+      width: 240px; height: 240px;
+      margin-bottom: 48px;
+    }
+    .coin-container {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      box-shadow:
+        0 20px 60px -10px rgba(232, 131, 42, 0.25),
+        0 40px 80px -20px rgba(0, 0, 0, 0.08);
+      animation: float 6s ease-in-out infinite;
+    }
+    .coin-img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      background: #E8832A;
+      transform: scale(1.35);
+    }
+    .coin-ring {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      border: 1px solid rgba(232, 131, 42, 0.12);
+      animation: pulse-ring 4s ease-in-out infinite;
+    }
+    .coin-ring:nth-child(2) {
+      inset: -40px;
+      border-color: rgba(232, 131, 42, 0.06);
+      animation-delay: 1s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    @keyframes pulse-ring {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.04); }
+    }
+    .hero h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      max-width: 700px;
+      margin-bottom: 16px;
+      color: var(--dark);
+    }
+    .hero h1 em { font-style: italic; color: var(--orange); }
+    .hero-sub {
+      font-size: 15px;
+      color: var(--gray);
+      margin-bottom: 40px;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+    .social-links { display: flex; gap: 12px; }
+    .social-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      text-decoration: none;
+      color: var(--dark);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: all 0.25s;
+      background: var(--white);
+    }
+    .social-links a:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      background: var(--orange-subtle);
+      transform: translateY(-1px);
+    }
+    .social-links a svg { width: 16px; height: 16px; }
+    .social-icon-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+    }
+    .social-links .social-icon {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+      transition: opacity 0.2s ease;
+    }
+    .social-icon-hover {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+    }
+    .social-links a:hover .social-icon-default {
+      opacity: 0;
+    }
+    .social-links a:hover .social-icon-hover {
+      opacity: 1;
+    }
+
+    /* ─── LORE ─── */
+    .lore {
+      padding: 100px 40px;
+      background: var(--off-white);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .lore-inner { max-width: 680px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 24px;
+    }
+    .lore h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 400;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      margin-bottom: 32px;
+      color: var(--dark);
+    }
+    .lore p {
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--gray);
+      margin-bottom: 20px;
+      font-weight: 300;
+    }
+    .lore p strong { color: var(--dark); font-weight: 500; }
+    .lore-highlight {
+      margin-top: 40px;
+      padding: 28px 32px;
+      border-left: 3px solid var(--orange);
+      background: var(--white);
+      border-radius: 0 8px 8px 0;
+    }
+    .lore-highlight p {
+      font-family: 'Instrument Serif', serif;
+      font-size: 20px;
+      line-height: 1.5;
+      color: var(--dark);
+      margin-bottom: 0;
+      font-weight: 400;
+    }
+
+    /* ─── LIVE DATA ─── */
+    .live-data { padding: 100px 40px; background: var(--white); }
+    .live-data-inner { max-width: 960px; margin: 0 auto; }
+    .live-data-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 40px;
+    }
+    .live-data h2 {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--dark);
+    }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--orange);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      background: var(--orange);
+      border-radius: 50%;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .stat-card {
+      padding: 24px;
+      background: var(--off-white);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    .stat-card:hover { border-color: rgba(232, 131, 42, 0.2); }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 8px;
+    }
+    .stat-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--dark);
+      letter-spacing: -0.02em;
+    }
+    .stat-value .unit {
+      font-size: 14px;
+      color: var(--gray);
+      font-weight: 400;
+      margin-left: 4px;
+    }
+    .stat-change {
+      font-size: 12px;
+      color: var(--orange);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* ─── EVENT STREAM ─── */
+    .event-stream {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--dark);
+    }
+    .stream-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .stream-title {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+    .stream-body {
+      padding: 4px 0;
+      max-height: 360px;
+      overflow-y: auto;
+      font-family: 'DM Sans', monospace;
+      font-size: 13px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+    .stream-event {
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      animation: fadeIn 0.3s ease;
+    }
+    .stream-event:hover { background: rgba(255,255,255,0.02); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .event-type {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      min-width: 80px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .event-type.compound {
+      background: rgba(232, 131, 42, 0.15);
+      color: var(--orange-light);
+    }
+    .event-type.fee {
+      background: rgba(100, 200, 130, 0.12);
+      color: #64C882;
+    }
+    .event-detail {
+      color: rgba(255,255,255,0.6);
+      flex: 1;
+      font-size: 13px;
+    }
+    .event-detail strong {
+      color: rgba(255,255,255,0.85);
+      font-weight: 500;
+    }
+    .event-time {
+      color: rgba(255,255,255,0.25);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+    .event-tx {
+      color: rgba(232, 131, 42, 0.5);
+      font-size: 11px;
+      text-decoration: none;
+      font-family: monospace;
+      transition: color 0.2s;
+    }
+    .event-tx:hover { color: var(--orange); }
+    .stream-loading {
+      padding: 20px;
+      text-align: center;
+      color: rgba(255,255,255,0.3);
+      font-size: 13px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 40px;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    footer p { font-size: 13px; color: var(--gray-light); font-weight: 300; }
+    footer a { color: var(--orange); text-decoration: none; }
+    .bootstrap-link-wrapper {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+    .bootstrap-x-link {
+      display: none;
+      color: var(--orange);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .bootstrap-x-link:hover {
+      color: var(--orange-light);
+    }
+    .bootstrap-link-wrapper:hover .bootstrap-text {
+      display: none;
+    }
+    .bootstrap-link-wrapper:hover .bootstrap-x-link {
+      display: inline;
+    }
+    .bootstrap-x-link .x-icon {
+      margin-right: 4px;
+      font-weight: 500;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 16px 20px; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: 11px; }
+      .hero { padding: 100px 24px 60px; }
+      .coin-wrapper { width: 180px; height: 180px; margin-bottom: 36px; }
+      .social-links { flex-wrap: wrap; justify-content: center; }
+      .lore { padding: 72px 24px; }
+      .live-data { padding: 72px 24px; }
+      .live-data-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stream-event { font-size: 12px; gap: 8px; padding: 8px 14px; }
+      .event-tx { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo"><span>$</span>Coin</div>
+    <ul class="nav-links">
+      <li><a href="#lore">Lore</a></li>
+      <li><a href="#live">Live</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="coin-wrapper">
+      <div class="coin-ring"></div>
+      <div class="coin-ring"></div>
+      <div class="coin-container">
+        <img class="coin-img" src="coin.png" alt="" onerror="this.alt=''; this.style.background='linear-gradient(135deg, #E8832A, #F5A04A)'">
+      </div>
+    </div>
+    <h1>Without <em>$Coin</em>, there would be nothing.</h1>
+    <p class="hero-sub">The fundamental unit. Powered by Bootstrap.</p>
+    <div class="social-links">
+      <a href="https://pump.fun/coin/zDhCPQhQC8GPV2N6n8TMBcWBQehYkMHBuBZMzy3pump" target="_blank" rel="noopener">
+        <span class="social-icon-wrapper">
+          <img src="pumpfun-logo.png" alt="Pump.fun" class="social-icon social-icon-default">
+          <img src="pumpfun-logo-hover.png" alt="Pump.fun" class="social-icon social-icon-hover">
+        </span>
+        Pump.fun
+      </a>
+      <a href="https://x.com/cointokendotfun" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X / Twitter
+      </a>
+      <a href="https://dexscreener.com/solana/fjt1dpbreuesu2r1dqfhxfatk9uitwau4bdvnnvm4c4w" target="_blank" rel="noopener">
+        <span class="social-icon-wrapper">
+          <img src="dex-screener-logo.png" alt="DexScreener" class="social-icon social-icon-default">
+          <img src="dex-screener-logo-hover.png" alt="DexScreener" class="social-icon social-icon-hover">
+        </span>
+        DexScreener
+      </a>
+    </div>
+  </section>
+
+  <!-- LORE -->
+  <section class="lore" id="lore">
+    <div class="lore-inner">
+      <div class="section-label">The Lore</div>
+      <h2>Before anything, there was $Coin.</h2>
+      <p>
+        Every token has a story. Most are fabricated post-launch, reverse-engineered narratives designed to justify a ticker. <strong>$Coin is different.</strong> It doesn't pretend to be something it's not. It is, quite literally, a coin.
+      </p>
+      <p>
+        $Coin is the first token to launch with <strong>Bootstrap</strong> — a liquidity compounding layer that automatically routes creator fees into buybacks and LP provision. Every trade strengthens the floor. Every transaction builds the foundation.
+      </p>
+      <p>
+        There is no team allocation. No insider wallets. No unlock schedule. Just the immutable mechanics of a system that compounds value for holders, autonomously and transparently, directly onchain.
+      </p>
+      <div class="lore-highlight">
+        <p>$Coin doesn't need a narrative. It <em>is</em> the narrative — proof that onchain mechanics can replace promises.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE DATA -->
+  <section class="live-data" id="live">
+    <div class="live-data-inner">
+      <div class="live-data-header">
+        <div>
+          <div class="section-label">Bootstrap Protocol</div>
+          <h2>Live Onchain Data</h2>
+        </div>
+        <div class="live-badge">
+          <span class="live-dot"></span>
+          Live
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">LP Compounding</div>
+          <div class="stat-value" id="stat-compound">...</div>
+          <div class="stat-change" id="stat-compound-sub">Loading history...</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Last Compound</div>
+          <div class="stat-value" id="stat-last">...</div>
+          <div class="stat-change" id="stat-last-sub">Loading history...</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Floor Price</div>
+          <div class="stat-value" id="stat-floor">...</div>
+          <div class="stat-change" id="stat-floor-sub">Loading...</div>
+        </div>
+      </div>
+
+      <div class="event-stream">
+        <div class="stream-header">
+          <span class="stream-title">Bootstrap Event Stream</span>
+          <span class="live-badge"><span class="live-dot"></span> Streaming</span>
+        </div>
+        <div class="stream-body" id="event-stream">
+          <div class="stream-loading" id="stream-loading">Loading all-time history...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>$Coin &middot; Powered by <span class="bootstrap-link-wrapper"><span class="bootstrap-text">Bootstrap</span><a href="https://x.com/bootstrapliq" target="_blank" rel="noopener" class="bootstrap-x-link"><span class="x-icon">𝕏</span> Bootstrap</a></span> Protocol &middot; Built on Solana</p>
+  </footer>
+
+  <script>
+    // ============================================================
+    // CONFIG
+    // ============================================================
+    const CONFIG = {
+      DEV_WALLET: '5UuT16eymej1dybsgM99qiPWJKJqejFGqpjfFdHrJcnd',
+      MINT_ADDRESS: 'zDhCPQhQC8GPV2N6n8TMBcWBQehYkMHBuBZMzy3pump',
+      HELIUS_API_KEY: '2c8bacd3-bbf3-4067-8501-14c78ebc74fe',
+      POLL_INTERVAL: 15000,
+      MAX_STREAM_EVENTS: 50,
+    };
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    const seenSignatures = new Set();
+    const allEvents = [];
+
+    // ============================================================
+    // UTILS
+    // ============================================================
+    function shortAddr(addr) {
+      return addr.slice(0, 4) + '...' + addr.slice(-4);
+    }
+
+    function relativeTime(date) {
+      const s = Math.floor((Date.now() - date.getTime()) / 1000);
+      if (s < 60) return s + 's ago';
+      const m = Math.floor(s / 60);
+      if (m < 60) return m + 'm ago';
+      const h = Math.floor(m / 60);
+      if (h < 24) return h + 'h ago';
+      const d = Math.floor(h / 24);
+      return d + 'd ago';
+    }
+
+    // ============================================================
+    // TRANSACTION CLASSIFICATION
+    // ============================================================
+    // Simple and accurate two-type model:
+    //   "compound" = SOL leaves dev wallet (buybacks + LP adds combined)
+    //   "fee"      = SOL enters dev wallet (creator fees from pump.fun)
+    // ============================================================
+    function classifyTransaction(tx) {
+      const sig = tx.signature;
+      const time = new Date(tx.timestamp * 1000);
+
+      // SOL leaving dev wallet (buybacks + LP)
+      const solOut = (tx.nativeTransfers || [])
+        .filter(t => t.fromUserAccount === CONFIG.DEV_WALLET)
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      // SOL entering dev wallet (fees)
+      const solIn = (tx.nativeTransfers || [])
+        .filter(t => t.toUserAccount === CONFIG.DEV_WALLET && t.fromUserAccount !== CONFIG.DEV_WALLET)
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      // Compounding: dev wallet spends SOL (buying tokens + adding LP)
+      if (solOut > 1_000_000) {
+        return {
+          type: 'compound',
+          amount: solOut / 1e9,
+          txSig: sig,
+          time: time,
+        };
+      }
+
+      // Fee: dev wallet receives SOL (creator fees)
+      if (solIn > 1_000_000) {
+        return {
+          type: 'fee',
+          amount: solIn / 1e9,
+          txSig: sig,
+          time: time,
+        };
+      }
+
+      // Dust / unclassifiable — skip
+      return null;
+    }
+
+    // ============================================================
+    // FETCH ALL TRANSACTIONS (PAGINATED)
+    // ============================================================
+    async function fetchAllTransactions() {
+      if (!CONFIG.HELIUS_API_KEY) return [];
+
+      const allTxs = [];
+      let lastSig = null;
+      let hasMore = true;
+
+      while (hasMore) {
+        let url = `https://api.helius.xyz/v0/addresses/${CONFIG.DEV_WALLET}/transactions?api-key=${CONFIG.HELIUS_API_KEY}&limit=100`;
+        if (lastSig) url += `&before=${lastSig}`;
+
+        try {
+          const res = await fetch(url);
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const txs = await res.json();
+
+          if (!txs || txs.length === 0) { hasMore = false; break; }
+
+          allTxs.push(...txs);
+          lastSig = txs[txs.length - 1].signature;
+
+          const el = document.getElementById('stream-loading');
+          if (el) el.textContent = `Loading history... ${allTxs.length} transactions`;
+
+          if (txs.length < 100) hasMore = false;
+          await new Promise(r => setTimeout(r, 150));
+        } catch (err) {
+          console.error('Fetch error:', err);
+          hasMore = false;
+        }
+      }
+
+      return allTxs;
+    }
+
+    // ============================================================
+    // PROCESS & DEDUPLICATE
+    // ============================================================
+    function processTransactions(rawTxs) {
+      const newEvents = [];
+      for (const tx of rawTxs) {
+        if (seenSignatures.has(tx.signature)) continue;
+        seenSignatures.add(tx.signature);
+        const event = classifyTransaction(tx);
+        if (event) newEvents.push(event);
+      }
+      return newEvents;
+    }
+
+    // ============================================================
+    // UPDATE STATS FROM ALL EVENTS
+    // ============================================================
+    function updateStats() {
+      const compounds = allEvents.filter(e => e.type === 'compound');
+
+      const totalCompound = compounds.reduce((s, e) => s + e.amount, 0);
+
+      document.getElementById('stat-compound').innerHTML =
+        totalCompound.toFixed(4) + '<span class="unit">SOL</span>';
+      document.getElementById('stat-compound-sub').textContent =
+        compounds.length + ' operations all-time';
+
+      // Last compound time
+      if (compounds.length > 0) {
+        const sorted = [...compounds].sort((a, b) => b.time - a.time);
+        const last = sorted[0];
+        updateLastCompound(last.time);
+      } else {
+        document.getElementById('stat-last').textContent = '—';
+        document.getElementById('stat-last-sub').textContent = 'No compounds yet';
+      }
+    }
+
+    // Live-updating "time since last compound"
+    let lastCompoundTime = null;
+
+    function updateLastCompound(time) {
+      if (time) lastCompoundTime = time;
+      if (!lastCompoundTime) return;
+
+      const s = Math.floor((Date.now() - lastCompoundTime.getTime()) / 1000);
+
+      if (s < 60) {
+        document.getElementById('stat-last').textContent = s + 's';
+        document.getElementById('stat-last-sub').textContent = 'ago';
+        document.getElementById('stat-last-sub').style.color = '#64C882';
+      } else if (s < 3600) {
+        const m = Math.floor(s / 60);
+        document.getElementById('stat-last').textContent = m + 'm ' + (s % 60) + 's';
+        document.getElementById('stat-last-sub').textContent = 'ago';
+        document.getElementById('stat-last-sub').style.color = '#64C882';
+      } else if (s < 86400) {
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        document.getElementById('stat-last').textContent = h + 'h ' + m + 'm';
+        document.getElementById('stat-last-sub').textContent = 'ago';
+        document.getElementById('stat-last-sub').style.color = s > 7200 ? 'var(--orange)' : '#64C882';
+      } else {
+        const d = Math.floor(s / 86400);
+        document.getElementById('stat-last').textContent = d + 'd';
+        document.getElementById('stat-last-sub').textContent = 'ago';
+        document.getElementById('stat-last-sub').style.color = '#E85A5A';
+      }
+    }
+
+    // Tick the last compound timer every second
+    setInterval(() => updateLastCompound(), 1000);
+
+    // ============================================================
+    // FLOOR PRICE (DexScreener — free, no key needed)
+    // ============================================================
+    async function fetchFloorPrice() {
+      if (!CONFIG.MINT_ADDRESS) {
+        document.getElementById('stat-floor').textContent = '—';
+        document.getElementById('stat-floor-sub').textContent = 'Set mint address';
+        return;
+      }
+      try {
+        const res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${CONFIG.MINT_ADDRESS}`);
+        const data = await res.json();
+        if (data.pairs && data.pairs.length > 0) {
+          const pair = data.pairs[0];
+          const price = parseFloat(pair.priceNative);
+          const change = pair.priceChange?.h24 || '0';
+          document.getElementById('stat-floor').innerHTML =
+            price.toFixed(8) + '<span class="unit">SOL</span>';
+          const changeNum = parseFloat(change);
+          const prefix = changeNum >= 0 ? '+' : '';
+          document.getElementById('stat-floor-sub').textContent = prefix + change + '% (24h)';
+          document.getElementById('stat-floor-sub').style.color =
+            changeNum >= 0 ? '#64C882' : '#E85A5A';
+        }
+      } catch (err) {
+        console.error('DexScreener error:', err);
+        document.getElementById('stat-floor').textContent = '—';
+        document.getElementById('stat-floor-sub').textContent = 'Error loading';
+      }
+    }
+
+    // ============================================================
+    // EVENT STREAM UI
+    // ============================================================
+    function addEventToStream(event) {
+      const stream = document.getElementById('event-stream');
+      const el = document.createElement('div');
+      el.className = 'stream-event';
+
+      const labels = { compound: 'Compound', fee: 'Fee' };
+      const descs = {
+        compound: `Compounded <strong>${event.amount.toFixed(4)} SOL</strong> into LP`,
+        fee: `Collected <strong>${event.amount.toFixed(4)} SOL</strong> in creator fees`,
+      };
+
+      el.innerHTML = `
+        <span class="event-type ${event.type}">${labels[event.type]}</span>
+        <span class="event-detail">${descs[event.type]}</span>
+        <a class="event-tx" href="https://solscan.io/tx/${event.txSig}" target="_blank" rel="noopener">${shortAddr(event.txSig)}</a>
+        <span class="event-time">${relativeTime(event.time)}</span>
+      `;
+
+      stream.insertBefore(el, stream.firstChild);
+      while (stream.children.length > CONFIG.MAX_STREAM_EVENTS) {
+        stream.removeChild(stream.lastChild);
+      }
+    }
+
+    // ============================================================
+    // POLL FOR NEW TRANSACTIONS
+    // ============================================================
+    async function pollNew() {
+      if (!CONFIG.HELIUS_API_KEY) return;
+      try {
+        const url = `https://api.helius.xyz/v0/addresses/${CONFIG.DEV_WALLET}/transactions?api-key=${CONFIG.HELIUS_API_KEY}&limit=20`;
+        const res = await fetch(url);
+        const txs = await res.json();
+        const newEvents = processTransactions(txs);
+
+        if (newEvents.length > 0) {
+          allEvents.push(...newEvents);
+          // Sort newest first, then reverse iterate so newest ends up at top
+          newEvents.sort((a, b) => b.time - a.time);
+          for (const event of newEvents.reverse()) addEventToStream(event);
+          updateStats();
+        }
+      } catch (err) {
+        console.error('Poll error:', err);
+      }
+      await fetchFloorPrice();
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    async function init() {
+      if (!CONFIG.HELIUS_API_KEY) {
+        document.getElementById('stream-loading').textContent =
+          'Configure HELIUS_API_KEY to enable live data';
+        document.getElementById('stat-compound').textContent = '—';
+        document.getElementById('stat-compound-sub').textContent = 'Awaiting connection';
+        document.getElementById('stat-last').textContent = '—';
+        document.getElementById('stat-last-sub').textContent = 'Awaiting connection';
+        await fetchFloorPrice();
+        return;
+      }
+
+      // Fetch complete all-time history
+      const rawTxs = await fetchAllTransactions();
+      const events = processTransactions(rawTxs);
+      allEvents.push(...events);
+
+      // Remove loading indicator
+      const loading = document.getElementById('stream-loading');
+      if (loading) loading.remove();
+
+      // Calculate all-time stats
+      updateStats();
+
+      // Show most recent events in stream (newest at top)
+      // Sort newest first, then reverse iterate so newest ends up at top after insertBefore
+      const recent = [...allEvents].sort((a, b) => b.time - a.time).slice(0, CONFIG.MAX_STREAM_EVENTS);
+      // Reverse so we iterate oldest to newest, ensuring newest ends up at top
+      for (const event of recent.reverse()) addEventToStream(event);
+
+      // Fetch price
+      await fetchFloorPrice();
+
+      // Start polling for new txs
+      setInterval(pollNew, CONFIG.POLL_INTERVAL);
+    }
+
+    init();
+  </script>
+
+</body>
+</html>
