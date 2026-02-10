@@ -134,6 +134,7 @@
       position: relative;
       width: 240px; height: 240px;
       margin-bottom: 48px;
+      z-index: 1;
     }
     .coin-container {
       width: 100%; height: 100%;
@@ -172,6 +173,45 @@
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.4; transform: scale(1.04); }
     }
+    .coin-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .coin-bg-item {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--orange);
+      opacity: 0;
+      animation: coinFall linear infinite;
+    }
+    .coin-bg-item::after {
+      content: '$';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Instrument Serif', serif;
+      font-size: 50%;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    @keyframes coinFall {
+      0% {
+        transform: translateY(-60px) rotate(0deg);
+        opacity: 0;
+      }
+      5% { opacity: 0.05; }
+      90% { opacity: 0.05; }
+      100% {
+        transform: translateY(calc(100vh + 60px)) rotate(360deg);
+        opacity: 0;
+      }
+    }
     .hero h1 {
       font-family: 'Instrument Serif', serif;
       font-size: clamp(32px, 5vw, 56px);
@@ -181,6 +221,8 @@
       max-width: 700px;
       margin-bottom: 16px;
       color: var(--dark);
+      position: relative;
+      z-index: 1;
     }
     .hero h1 em { font-style: italic; color: var(--orange); }
     .hero-sub {
@@ -189,8 +231,15 @@
       margin-bottom: 40px;
       font-weight: 300;
       letter-spacing: 0.02em;
+      position: relative;
+      z-index: 1;
     }
-    .social-links { display: flex; gap: 12px; }
+    .social-links {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
     .social-links a {
       display: inline-flex;
       align-items: center;
@@ -529,6 +578,7 @@
 
   <!-- HERO -->
   <section class="hero" id="hero">
+    <div class="coin-bg" id="coin-bg"></div>
     <div class="coin-wrapper">
       <div class="coin-ring"></div>
       <div class="coin-ring"></div>
@@ -948,6 +998,37 @@
     }
 
     // ============================================================
+    // FLOATING COINS BACKGROUND
+    // ============================================================
+    function spawnCoins() {
+      const container = document.getElementById('coin-bg');
+      if (!container) return;
+      const count = 12;
+      for (let i = 0; i < count; i++) {
+        const coin = document.createElement('div');
+        coin.className = 'coin-bg-item';
+        const size = 24 + Math.random() * 28;
+        coin.style.width = size + 'px';
+        coin.style.height = size + 'px';
+
+        // CRITICAL: Avoid center 40% of the screen.
+        // Coins only spawn in the left 30% or right 30%.
+        // This keeps the main $Coin logo area completely clear.
+        let xPos;
+        if (Math.random() < 0.5) {
+          xPos = Math.random() * 30;        // 0% to 30% (left zone)
+        } else {
+          xPos = 70 + Math.random() * 30;   // 70% to 100% (right zone)
+        }
+        coin.style.left = xPos + '%';
+
+        coin.style.animationDuration = (18 + Math.random() * 22) + 's';
+        coin.style.animationDelay = (Math.random() * -30) + 's';
+        container.appendChild(coin);
+      }
+    }
+
+    // ============================================================
     // INIT
     // ============================================================
     async function init() {
@@ -987,6 +1068,7 @@
       setInterval(pollNew, CONFIG.POLL_INTERVAL);
     }
 
+    spawnCoins();
     init();
   </script>
 
