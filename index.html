@@ -695,6 +695,10 @@
     // ============================================================
     const seenSignatures = new Set();
     const allEvents = [];
+    let pollIntervalId = null;
+    let lastSuccessfulPoll = null;
+    let consecutiveErrors = 0;
+    let isPolling = false;
 
     // ============================================================
     // CONTRACT ADDRESS COPY FUNCTIONALITY
@@ -818,7 +822,11 @@
 
         try {
           const res = await fetch(url);
-          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          if (!res.ok) {
+            const errorText = await res.text();
+            console.error(`Helius API error (${res.status}):`, errorText);
+            throw new Error(`HTTP ${res.status}: ${errorText.substring(0, 100)}`);
+          }
           const txs = await res.json();
 
           if (!txs || txs.length === 0) { hasMore = false; break; }
@@ -833,6 +841,8 @@
           await new Promise(r => setTimeout(r, 150));
         } catch (err) {
           console.error('Fetch error:', err);
+          const el = document.getElementById('stream-loading');
+          if (el) el.textContent = `Error loading history: ${err.message}`;
           hasMore = false;
         }
       }
@@ -974,14 +984,77 @@
     }
 
     // ============================================================
+    // UPDATE CONNECTION STATUS INDICATOR
+    // ============================================================
+    function updateConnectionStatus(isConnected, error = null) {
+      const badge = document.querySelector('.live-badge');
+      const dot = document.querySelector('.live-dot');
+      if (!badge || !dot) return;
+
+      if (isConnected) {
+        badge.innerHTML = '<span class="live-dot"></span> Streaming';
+        badge.style.color = '#64C882';
+        dot.style.background = '#64C882';
+        consecutiveErrors = 0;
+      } else {
+        const errorMsg = error ? ` (${error})` : '';
+        badge.innerHTML = '<span class="live-dot" style="background: #E85A5A;"></span> Disconnected' + errorMsg;
+        badge.style.color = '#E85A5A';
+      }
+    }
+
+    // ============================================================
     // POLL FOR NEW TRANSACTIONS
     // ============================================================
     async function pollNew() {
-      if (!CONFIG.HELIUS_API_KEY) return;
+      if (!CONFIG.HELIUS_API_KEY) {
+        updateConnectionStatus(false, 'No API key');
+        return;
+      }
+
+      // Prevent concurrent polls
+      if (isPolling) {
+        console.warn('Poll already in progress, skipping...');
+        return;
+      }
+
+      isPolling = true;
       try {
         const url = `https://api.helius.xyz/v0/addresses/${CONFIG.DEV_WALLET}/transactions?api-key=${CONFIG.HELIUS_API_KEY}&limit=20`;
-        const res = await fetch(url);
+        
+        // Create abort controller for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        const res = await fetch(url, {
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          let errorMsg = `HTTP ${res.status}`;
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorMsg = errorJson.message || errorJson.error || errorMsg;
+          } catch {
+            errorMsg = errorText.substring(0, 50) || errorMsg;
+          }
+          throw new Error(errorMsg);
+        }
+
         const txs = await res.json();
+        
+        // Check if response is an error object
+        if (txs.error || txs.message) {
+          throw new Error(txs.error || txs.message || 'Unknown API error');
+        }
+
+        if (!Array.isArray(txs)) {
+          throw new Error('Invalid response format: expected array');
+        }
+
         const newEvents = processTransactions(txs);
 
         if (newEvents.length > 0) {
@@ -991,10 +1064,39 @@
           for (const event of newEvents.reverse()) addEventToStream(event);
           updateStats();
         }
+
+        // Success - update connection status
+        lastSuccessfulPoll = Date.now();
+        updateConnectionStatus(true);
+        
+        // Only fetch floor price every 5th poll to reduce rate limiting
+        if (consecutiveErrors === 0 && Math.random() < 0.2) {
+          await fetchFloorPrice();
+        }
       } catch (err) {
+        consecutiveErrors++;
         console.error('Poll error:', err);
+        
+        let errorMsg = err.message || err.toString();
+        if (err.name === 'AbortError') {
+          errorMsg = 'Timeout';
+        }
+        updateConnectionStatus(false, errorMsg.substring(0, 30));
+
+        // If we've had multiple consecutive errors, try to fetch floor price less frequently
+        if (consecutiveErrors % 5 === 0) {
+          await fetchFloorPrice();
+        }
+
+        // Exponential backoff on repeated errors (max 60s)
+        if (consecutiveErrors > 3) {
+          const backoffDelay = Math.min(1000 * Math.pow(2, consecutiveErrors - 3), 60000);
+          console.warn(`Backing off for ${backoffDelay}ms due to ${consecutiveErrors} consecutive errors`);
+          await new Promise(r => setTimeout(r, backoffDelay));
+        }
+      } finally {
+        isPolling = false;
       }
-      await fetchFloorPrice();
     }
 
     // ============================================================
@@ -1064,8 +1166,25 @@
       // Fetch price
       await fetchFloorPrice();
 
+      // Update connection status to connected
+      updateConnectionStatus(true);
+
       // Start polling for new txs
-      setInterval(pollNew, CONFIG.POLL_INTERVAL);
+      pollIntervalId = setInterval(pollNew, CONFIG.POLL_INTERVAL);
+      
+      // Also poll immediately
+      pollNew();
+
+      // Health check: verify connection status every 30 seconds
+      setInterval(() => {
+        if (lastSuccessfulPoll) {
+          const timeSinceLastPoll = Date.now() - lastSuccessfulPoll;
+          // If no successful poll in 2 minutes, mark as disconnected
+          if (timeSinceLastPoll > 120000) {
+            updateConnectionStatus(false, 'No response');
+          }
+        }
+      }, 30000);
     }
 
     spawnCoins();
